@@ -2,16 +2,24 @@
 <html>
     <head>
         <link rel="stylesheet" href="spa.css">
-        <script src="spa.js"></script>
+        <script src="spa.js" defer></script>
         <title>Single Page Application Wordly</title>
     </head>
 
+
     <body>
-        <form id = 'search bar'>
-            <input type="text" id="searchInput" placeholder="Search for a word...">
-            <button type="button" id="searchButton">Search</button>
+        <div class="container">
+        <h1>Wordly</h1>
+        <!-- <p>Search for a word in the dictionary</p> -->
+        <form id="searchForm">
+            <input type="text" id="searchInput" placeholder="Search for a word..." required>
+            <button type="submit" id="searchButton">Search</button>
             <button type="button" id="clearButton">Clear</button>
         </form>
+
+        <!-- where results will show -->
+        <div id="results"></div>
+        </div>
     </body>
 
 </html>
