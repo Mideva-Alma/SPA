@@ -3,15 +3,16 @@ const form = document.getElementById("searchForm");
 const input = document.getElementById("searchInput");
 const resultsDiv = document.getElementById("results");
 const clearButton = document.getElementById("clearButton");
+const searchButton = document.getElementById("searchButton");
 
-// Base API URL
+
 const API_URL = "https://api.dictionaryapi.dev/api/v2/entries/en/";
 
 // Handle form submission
 form.addEventListener("submit", async (event) => {
     event.preventDefault(); // prevent page reload
 
-    const word = input.value.trim();
+    const word = input.value.trim().toLowerCase();
 
     if (word === "") {
         showError("Please enter a word.");
@@ -19,6 +20,7 @@ form.addEventListener("submit", async (event) => {
     }
 
     fetchWord(word);
+    searchButton.disabled = true;
 });
 
 // Handle clear button
@@ -57,20 +59,38 @@ function displayResults(data) {
     phonetic.textContent = data.phonetic || "";
 
     const meaning = data.meanings[0];
+
     const partOfSpeech = document.createElement("p");
     partOfSpeech.className = "part-of-speech";
-    partOfSpeech.textContent = meaning.partOfSpeech;
+    partOfSpeech.textContent = "Part of speech: " + meaning.partOfSpeech;
 
     const definition = document.createElement("p");
     definition.className = "definition";
-    definition.textContent = meaning.definitions[0].definition;
+    definition.textContent ="Definition: " + meaning.definitions[0].definition;
 
     resultsDiv.appendChild(wordTitle);
     resultsDiv.appendChild(phonetic);
     resultsDiv.appendChild(partOfSpeech);
     resultsDiv.appendChild(definition);
 
-    // Audio pronunciation 
+    // sentence Example
+    if (meaning.definitions[0].example) {
+        const example = document.createElement("p");
+        example.textContent =
+            "Example: " + meaning.definitions[0].example;
+        resultsDiv.appendChild(example);
+    }
+
+    // Synonyms display
+    if (meaning.definitions[0].synonyms &&
+        meaning.definitions[0].synonyms.length > 0) {
+        const synonyms = document.createElement("p");
+        synonyms.textContent =
+            "Synonyms: " + meaning.definitions[0].synonyms.join(", ");
+        resultsDiv.appendChild(synonyms);
+    }
+
+    //pronunciation 
     const audioData = data.phonetics.find(p => p.audio);
     if (audioData) {
         const audio = document.createElement("audio");
@@ -78,9 +98,13 @@ function displayResults(data) {
         audio.src = audioData.audio;
         resultsDiv.appendChild(audio);
     }
+
+    searchButton.disabled = false;
+
 }
 
 // Display error messages
 function showError(message) {
     resultsDiv.innerHTML = `<p class="error">${message}</p>`;
+    searchButton.disabled = false;
 }
